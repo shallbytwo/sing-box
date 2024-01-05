@@ -124,14 +124,28 @@
       },
       {
         "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "network": "udp",
+            "port": 443
+          },
+          {
+            "rule_set": [
+              "geoip-cn",
+              "geosite-cn"
+            ],
+            "invert": true
+          }
+        ],
+        "outbound": "block"
+      },
+      {
+        "type": "logical",
         "mode": "or",
         "rules": [
           {
             "port": 853
-          },
-          {
-            "network": "udp",
-            "port": 443
           },
           {
             "protocol": "stun"
