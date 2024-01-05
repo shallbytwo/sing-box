@@ -57,10 +57,6 @@
         "server": "dns_proxy"
       },
       {
-        "rule_set": "geosite-cn",
-        "server": "dns_direct"
-      },
-      {
         "rule_set": [
           "geosite-category-companies@cn",
           "geosite-cn"
