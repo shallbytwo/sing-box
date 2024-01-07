@@ -183,6 +183,12 @@
             }
         ],
         "outbound": "proxy"
+      }，
+      {
+        "domain_suffix": [
+          ".cn"
+        ],
+        "outbound": "direct"
       }
     ],
     "final": "proxy",
