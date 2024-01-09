@@ -142,6 +142,22 @@
         ],
         "outbound": "block"
       },
+      { 
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+            {
+                "rule_set": [
+                  "geosite-google",
+                  "geosite-openai"
+                ]
+            },
+            {
+                "domain_suffix": "googleapis.cn"
+            }
+        ],
+        "outbound": "proxy"
+      },
       {
         "rule_set": [
             "geoip-cn",
@@ -166,23 +182,6 @@
             }
         ],
         "outbound": "direct"
-      },
-      { 
-        "type": "logical",
-        "mode": "or",
-        "rules": [
-            {
-                "rule_set": [
-                  "geosite-google",
-                  "geosite-openai",
-                  "geosite-geolocation-!cn"
-                ]
-            },
-            {
-                "domain_suffix": "googleapis.cn"
-            }
-        ],
-        "outbound": "proxy"
       },
       {
         "domain_suffix": [
