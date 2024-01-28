@@ -34,7 +34,8 @@
           "geosite-category-ads-all",
           "BlockHttpDNS"
         ],
-        "server": "dns_block"
+        "server": "dns_block",
+        "disable_cache": true
       },
       {
         "rule_set": "geosite-geolocation-!cn",
@@ -86,17 +87,8 @@
   "route": {
     "rules": [
       {
-        "type": "logical",
-        "mode": "or",
-        "rules": [
-          {
-            "protocol": "dns"
-          },
-          {
-            "port": 53
-          }
-        ],
-        "outbound": "dns-out"
+          "protocol": "dns",
+          "outbound": "dns-out"
       },
       {
         "ip_is_private": true,
