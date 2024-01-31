@@ -113,24 +113,9 @@
         "outbound": "block"
       },
       {
-        "type": "logical",
-        "mode": "or",
-        "rules": [
-          {
-            "port": 853
-          },
-          {
-            "protocol": "stun"
-          },
-          {
-            "protocol": "quic"
-          },
-          {
-            "rule_set": [
-              "geosite-category-ads-all",
-              "BlockHttpDNS"
-            ]
-          }
+        "rule_set": [
+          "geosite-category-ads-all",
+          "BlockHttpDNS"
         ],
         "outbound": "block"
       },
