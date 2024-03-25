@@ -30,10 +30,7 @@
         "server": "dns_direct"
       },
       {
-        "rule_set": [
-          "geosite-category-ads-all",
-          "BlockHttpDNS"
-        ],
+        "rule_set": "BlockHttpDNS",
         "server": "dns_block",
         "disable_cache": true
       },
@@ -113,10 +110,7 @@
         "outbound": "block"
       },
       {
-        "rule_set": [
-          "geosite-category-ads-all",
-          "BlockHttpDNS"
-        ],
+        "rule_set": "BlockHttpDNS",
         "outbound": "block"
       },
       { 
@@ -206,13 +200,6 @@
         "download_detour": "proxy"
       },
       {
-        "tag": "geosite-category-ads-all",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_rule_set/geosite-category-ads-all.srs",
-        "download_detour": "proxy"
-      },
-      {
         "tag": "geosite-google",
         "type": "remote",
         "format": "binary",
@@ -244,7 +231,7 @@
         "tag": "BlockHttpDNS",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/bm7/BlockHttpDNS.srs",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-httpdns.srs",
         "download_detour": "proxy"
       }
     ]
