@@ -7,13 +7,19 @@
     "servers": [
       {
         "tag": "dns_direct",
-        "address": "https://223.5.5.5/dns-query",
+        "address": "https://dns.alidns.com/dns-query",
+        "address_resolver": "dns_resolver",
         "detour": "direct"
       },
       {
         "tag": "dns_proxy",
         "address": "https://8.8.8.8/dns-query",
         "detour": "proxy"
+      },
+      {
+        "tag": "dns_resolver",
+        "address": "223.5.5.5",
+        "detour": "direct"
       },
       {
         "tag": "dns_block",
