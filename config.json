@@ -7,13 +7,19 @@
     "servers": [
       {
         "tag": "dns_direct",
-        "address": "223.5.5.5",
+        "address": "https://dns.alidns.com/dns-query",
+        "address_resolver": "dns_resolver",
         "detour": "direct"
       },
       {
         "tag": "dns_proxy",
         "address": "https://8.8.8.8/dns-query",
         "detour": "proxy"
+      },
+      {
+          "tag": "dns_resolver",
+          "address": "223.5.5.5",
+          "detour": "direct"
       },
       {
         "tag": "dns_block",
@@ -27,7 +33,7 @@
     "rules": [
       {
         "outbound": "any",
-        "server": "dns_direct"
+        "server": "dns_resolver"
       },
       {
         "rule_set": [
@@ -57,7 +63,7 @@
         "server": "dns_direct"
       }
     ],
-    "final": "dns_proxy",
+    "final": "dns_direct",
     "strategy": "ipv4_only",
     "disable_cache": false,
     "disable_expire": false,
