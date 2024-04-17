@@ -51,8 +51,21 @@
         "server": "dns_fakeip"
       },
       {
-        "rule_set": "geosite-geolocation-!cn",
-        "server": "dns_proxy"
+          "rule_set": "geosite-geolocation-!cn",
+          "query_type": [
+              "CNAME"
+          ],
+          "server": "dns_proxy"
+      },
+      {
+          "query_type": [
+              "A",
+              "AAAA",
+              "CNAME"
+          ],
+          "invert": true,
+          "server": "dns_block",
+          "disable_cache": true
       }
     ],
     "final": "dns_proxy",
