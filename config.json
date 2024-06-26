@@ -13,7 +13,8 @@
       },
       {
         "tag": "dns_proxy",
-        "address": "https://8.8.8.8/dns-query",
+        "address": "https://dns.google/dns-query",
+        "address_resolver": "dns_resolver",
         "detour": "proxy"
       },
       {
@@ -66,6 +67,21 @@
           "invert": true,
           "server": "dns_block",
           "disable_cache": true
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "rule_set": "geosite-geolocation-!cn",
+            "invert": true
+          },
+          {
+            "rule_set": "geoip-cn"
+          }
+        ],
+        "server": "dns_proxy",
+        "client_subnet": "114.114.114.114/24"
       }
     ],
     "final": "dns_proxy",
@@ -104,6 +120,10 @@
       {
         "ip_is_private": true,
         "outbound": "direct"
+      },
+      {
+        "protocol": "quic",
+        "outbound": "block"
       },
       {
         "type": "logical",
