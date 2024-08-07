@@ -186,7 +186,9 @@
       },
       {
         "domain_suffix": [
-          ".cn"
+          ".cn",
+          "aliyuncs.com",
+          "alibabachengdun.com"
         ],
         "outbound": "direct"
       }
