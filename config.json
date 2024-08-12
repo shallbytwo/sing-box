@@ -190,7 +190,8 @@
           "aliyuncs.com",
           "alibabachengdun.com",
           "geevisit.com",
-          "networkbench.com"
+          "networkbench.com",
+          "weilayun.com"
         ],
         "outbound": "direct"
       }
