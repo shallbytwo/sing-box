@@ -188,7 +188,8 @@
         "domain_suffix": [
           ".cn",
           "aliyuncs.com",
-          "alibabachengdun.com"
+          "alibabachengdun.com",
+          "geevisit.com"
         ],
         "outbound": "direct"
       }
