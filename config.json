@@ -163,7 +163,7 @@
         "rule_set": [
             "geoip-cn",
             "ChinaIp",
-            "ChinaCompanyIp"
+            "ChinaCompanyIp",
             "geosite-geolocation-cn",
             "geosite-apple@cn",
             "geosite-icloud@cn"
