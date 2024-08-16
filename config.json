@@ -162,6 +162,8 @@
       {
         "rule_set": [
             "geoip-cn",
+            "ChinaIp",
+            "ChinaCompanyIp"
             "geosite-geolocation-cn",
             "geosite-apple@cn",
             "geosite-icloud@cn"
@@ -205,6 +207,20 @@
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_ip_rule_set/geoip-cn.srs",
+        "download_detour": "proxy"
+      },
+      {
+        "tag": "ChinaIp",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/ACL4SSR/ChinaIp.srs",
+        "download_detour": "proxy"
+      },
+      {
+        "tag": "ChinaCompanyIp",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/ACL4SSR/ChinaCompanyIp.srs",
         "download_detour": "proxy"
       },
       {
