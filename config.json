@@ -149,7 +149,12 @@
         "rule_set": [
             "geoip-cn",
             "ChinaIp",
-            "ChinaCompanyIp",
+            "ChinaCompanyIp"
+        ],
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
             "geosite-geolocation-cn",
             "geosite-apple@cn",
             "geosite-icloud@cn"
