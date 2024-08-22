@@ -58,16 +58,6 @@
               "CNAME"
           ],
           "server": "dns_proxy"
-      },
-      {
-          "query_type": [
-              "A",
-              "AAAA",
-              "CNAME"
-          ],
-          "invert": true,
-          "server": "dns_block",
-          "disable_cache": true
       }
     ],
     "final": "dns_proxy",
@@ -147,14 +137,6 @@
       },
       {
         "rule_set": [
-            "geoip-cn",
-            "ChinaIp",
-            "ChinaCompanyIp"
-        ],
-        "outbound": "direct"
-      },
-      {
-        "rule_set": [
             "geosite-geolocation-cn",
             "geosite-apple@cn",
             "geosite-icloud@cn"
@@ -186,6 +168,14 @@
           "networkbench.com",
           "weilayun.com",
           "hiecheimaetu.com"
+        ],
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+            "geoip-cn",
+            "ChinaIp",
+            "ChinaCompanyIp"
         ],
         "outbound": "direct"
       }
