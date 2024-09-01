@@ -39,6 +39,14 @@
       },
       {
         "rule_set": [
+          "ads"
+        ],
+        "rewrite_ttl": 0,
+        "disable_cache": true,
+        "server": "dns_block"
+      },
+      {
+        "rule_set": [
           "geosite-category-companies@cn",
           "geosite-cn"
         ],
@@ -99,6 +107,12 @@
       },
       {
         "protocol": "quic",
+        "outbound": "block"
+      },
+      {
+        "rule_set": [
+          "ads"
+        ],
         "outbound": "block"
       },
       {
@@ -183,6 +197,13 @@
     "final": "proxy",
     "auto_detect_interface": true,
     "rule_set": [
+      {
+        "tag": "ads",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/ads.srs",
+        "download_detour": "proxy"
+      },
       {
         "tag": "geoip-cn",
         "type": "remote",
