@@ -167,7 +167,10 @@
           "geevisit.com",
           "networkbench.com",
           "weilayun.com",
-          "hiecheimaetu.com"
+          "hiecheimaetu.com",
+          "argotunnel.com",
+          "cftunnel.com"
+
         ],
         "outbound": "direct"
       },
