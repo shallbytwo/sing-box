@@ -9,14 +9,22 @@
         "tag": "dns_direct",
         "address": "https://dns.alidns.com/dns-query",
         "address_resolver": "dns_resolver",
+        "address_strategy": "ipv4_only",
         "detour": "direct"
       },
       {
         "tag": "dns_proxy",
         "address": "https://dns.google/dns-query",
         "address_resolver": "dns_resolver",
-        "detour": "proxy",
-        "client_subnet": "218.30.19.50"
+        "address_strategy": "ipv4_only",
+        "detour": "proxy"
+      },
+      {
+        "tag": "dns_proxy_getipv6",
+        "address": "https://cloudflare-dns.com/dns-query",
+        "address_resolver": "dns_resolver",
+        "address_strategy": "ipv6_only",
+        "detour": "proxy"
       },
       {
         "tag": "dns_resolver",
@@ -61,7 +69,6 @@
       }
     ],
     "final": "dns_proxy",
-    "strategy": "ipv4_only",
     "disable_cache": false,
     "disable_expire": false,
     "fakeip": {
