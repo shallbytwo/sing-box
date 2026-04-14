@@ -1,84 +1,82 @@
+//适配sing-box 1.13.8
 {
   "log": {
-    "level": "warn",
+    "level": "error",
+    "output": "singbox.log",
     "timestamp": true
   },
   "dns": {
     "servers": [
       {
+        "type": "https",
         "tag": "dns_direct",
-        "address": "https://dns.alidns.com/dns-query",
-        "address_resolver": "dns_resolver",
-        "address_strategy": "ipv4_only",
+        "server": "223.5.5.5",
         "detour": "direct"
       },
       {
-        "tag": "dns_proxy",
-        "address": "https://dns.google/dns-query",
-        "address_resolver": "dns_resolver",
-        "address_strategy": "ipv4_only",
+        "type": "https",
+        "tag": "dns_cloudflare",
+        "server": "1.1.1.1",
         "detour": "proxy"
       },
       {
-        "tag": "dns_proxy_getipv6",
-        "address": "https://cloudflare-dns.com/dns-query",
-        "address_resolver": "dns_resolver",
-        "address_strategy": "ipv6_only",
-        "detour": "proxy"
-      },
-      {
-        "tag": "dns_resolver",
-        "address": "223.5.5.5",
-        "detour": "direct"
-      },
-      {
-        "tag": "dns_block",
-        "address": "rcode://success"
-      },
-      {
+        "type": "fakeip",
         "tag": "dns_fakeip",
-        "address": "fakeip"
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "fc00::/18"
       }
     ],
     "rules": [
       {
-        "outbound": "any",
-        "server": "dns_direct"
+        "query_type": [
+          "SVCB",
+          "HTTPS"
+        ],
+        "action": "predefined",
+        "rcode": "NOTIMP"
       },
       {
         "rule_set": [
-          "geosite-category-companies@cn",
-          "geosite-cn"
+          "geosite-category-ads-all",
+          "geosite-category-httpdns-cn"
         ],
+        "action": "predefined",
+        "rcode": "NXDOMAIN"
+      },
+      {
+        "rule_set": "geosite-cn",
         "server": "dns_direct"
       },
       {
-        "rule_set": "geosite-geolocation-!cn",
         "query_type": [
-            "A",
-            "AAAA"
+          "A",
+          "AAAA"
         ],
+        "rewrite_ttl": 1,
         "server": "dns_fakeip"
-      },
-      {
-          "rule_set": "geosite-geolocation-!cn",
-          "query_type": [
-              "CNAME"
-          ],
-          "server": "dns_proxy"
       }
     ],
-    "final": "dns_proxy",
+    "final": "dns_cloudflare",
+    "strategy": "ipv4_only",
     "disable_cache": false,
     "disable_expire": false,
-    "fakeip": {
-        "enabled": true,
-        "inet4_range": "198.18.0.0/15",
-        "inet6_range": "fc00::/18"
-    },
-    "independent_cache": true
+    "cache_capacity": 4096,
+    "independent_cache": true,
+    "reverse_mapping": true
   },
   "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "address": [
+        "172.19.0.1/30",
+        "fdfe:dcba:9876::1/126"
+      ],
+      "mtu": 9000,
+      "auto_route": true,
+      "strict_route": true,
+      "stack": "system"
+    }
   ],
   "outbounds": [
     {
@@ -86,203 +84,229 @@
       "tag": "direct"
     },
     {
-      "type": "block",
-      "tag": "block"
+      "type": "selector",
+      "tag": "proxy",
+      "outbounds": [
+        "vless",
+        "ss"
+      ],
+      "default": "vless",
+      "interrupt_exist_connections": false
     },
     {
-      "type": "dns",
-      "tag": "dns-out"
+      "type": "vless",
+      "tag": "vless",
+      "server": "xxxxxx",
+      "server_port": 443,
+      "uuid": "xxxxxx",
+      "flow": "xtls-rprx-vision",
+      "packet_encoding": "xudp",
+      "tls": {
+        "enabled": true,
+        "server_name": "xxxxxxx",
+        "curve_preferences": [
+          "X25519MLKEM768"
+        ],
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "xxxxx",
+          "short_id": "xxxx"
+        }
+      },
+      "tcp_keep_alive": "5m",
+      "tcp_keep_alive_interval": "60s"
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "ss",
+      "server": "xxxxxx",
+      "server_port": 56787,
+      "method": "aes-256-gcm",
+      "password": "xxxxx+xxxxx==",
+      "plugin": "obfs-local",
+      "plugin_opts": "obfs=http;obfs-host=icloud.com",
+      "network": "tcp",
+      "udp_over_tcp": false,
+      "multiplex": {}
     }
   ],
   "route": {
     "rules": [
       {
-          "protocol": "dns",
-          "outbound": "dns-out"
+        "rule_set": "telegram",
+        "invert": true,
+        "action": "sniff"
       },
       {
-        "ip_is_private": true,
+        "protocol": "dns",
+        "action": "hijack-dns"
+      },
+      {
+        "protocol": "ssh",
+        "action": "route",
         "outbound": "direct"
       },
       {
-        "protocol": "quic",
-        "outbound": "block"
+        "ip_is_private": true,
+        "action": "route",
+        "outbound": "direct"
+      },
+      {
+        "domain": [
+          "browser.sentry-cdn.com",
+          "ping0.cc"
+        ],
+        "action": "reject",
+        "method": "default",
+        "no_drop": false
+      },
+      {
+        "rule_set": [
+          "geosite-category-ads-all",
+          "geosite-category-httpdns-cn"
+        ],
+        "action": "reject",
+        "method": "default",
+        "no_drop": false
       },
       {
         "type": "logical",
         "mode": "and",
         "rules": [
           {
-            "network": "udp",
-            "port": 443
+            "rule_set": "telegram"
+          },
+          {
+            "ip_version": 6
+          }
+        ],
+        "action": "reject",
+        "method": "default",
+        "no_drop": false
+      },
+      {
+        "rule_set": [
+          "telegram"
+        ],
+        "action": "route",
+        "outbound": "proxy"
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "protocol": "quic"
           },
           {
             "rule_set": [
-              "geoip-cn",
               "geosite-cn"
             ],
             "invert": true
           }
         ],
-        "outbound": "block"
+        "action": "reject",
+        "method": "default",
+        "no_drop": false
       },
-      { 
-        "type": "logical",
-        "mode": "or",
-        "rules": [
-            {
-                "rule_set": [
-                  "geosite-google",
-                  "geosite-openai"
-                ]
-            },
-            {
-                "domain_suffix": "googleapis.cn"
-            }
-        ],
+      {
+        "rule_set": "geosite-google",
+        "action": "route",
         "outbound": "proxy"
       },
       {
-        "rule_set": [
-            "geosite-geolocation-cn",
-            "geosite-apple@cn",
-            "geosite-icloud@cn"
-        ],
-        "outbound": "direct"
+        "rule_set": "geosite-proxy",
+        "action": "route",
+        "outbound": "proxy"
       },
       {
-        "type": "logical",
-        "mode": "and",
-        "rules": [
-            {
-                "rule_set": "geoip-cn"
-            },
-            {
-                "rule_set": [
-                    "geosite-cn",
-                    "geosite-category-companies@cn"
-                ]
-            }
-        ],
-        "outbound": "direct"
-      },
-      {
-        "domain_suffix": [
-          ".cn",
-          "aliyuncs.com",
-          "alibabachengdun.com",
-          "geevisit.com",
-          "networkbench.com",
-          "weilayun.com",
-          "hiecheimaetu.com"
-        ],
-        "outbound": "direct"
+        "action": "resolve"
       },
       {
         "rule_set": [
-            "geoip-cn",
-            "ChinaIp",
-            "ChinaCompanyIp"
+          "geoip-cn"
         ],
+        "action": "route",
         "outbound": "direct"
       }
     ],
-    "final": "proxy",
-    "auto_detect_interface": true,
     "rule_set": [
       {
-        "tag": "geoip-cn",
+        "tag": "geosite-category-ads-all",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_ip_rule_set/geoip-cn.srs",
+        "url": "https://raw.githubusercontent.com/Yuu518/sing-box-rules/rule_set/rule_set_site/category-ads-all.srs",
         "download_detour": "proxy"
       },
       {
-        "tag": "ChinaIp",
+        "tag": "geosite-category-httpdns-cn",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/ACL4SSR/ChinaIp.srs",
-        "download_detour": "proxy"
-      },
-      {
-        "tag": "ChinaCompanyIp",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/ACL4SSR/ChinaCompanyIp.srs",
+        "url": "https://raw.githubusercontent.com/nekolsd/sing-geosite/refs/heads/rule-set/category-httpdns-cn.srs",
         "download_detour": "proxy"
       },
       {
         "tag": "geosite-cn",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_rule_set/geosite-cn.srs",
+        "url": "https://raw.githubusercontent.com/nekolsd/sing-geosite/refs/heads/rule-set/cn.srs",
         "download_detour": "proxy"
       },
       {
-        "tag": "geosite-geolocation-cn",
+        "tag": "geosite-proxy",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_rule_set/geosite-geolocation-cn.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset/proxy.srs",
         "download_detour": "proxy"
       },
       {
-        "tag": "geosite-geolocation-!cn",
+        "tag": "telegram",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_rule_set/geosite-geolocation-!cn.srs",
-        "download_detour": "proxy"
-      },
-      {
-        "tag": "geosite-category-companies@cn",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_rule_set/geosite-category-companies@cn.srs",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geoip/telegram.srs",
         "download_detour": "proxy"
       },
       {
         "tag": "geosite-google",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_rule_set/geosite-google.srs",
+        "url": "https://raw.githubusercontent.com/nekolsd/sing-geosite/refs/heads/rule-set/google.srs",
         "download_detour": "proxy"
       },
       {
-        "tag": "geosite-icloud@cn",
+        "tag": "geoip-cn",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_rule_set/geosite-icloud@cn.srs",
-        "download_detour": "proxy"
-      },
-      {
-        "tag": "geosite-apple@cn",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_rule_set/geosite-apple@cn.srs",
-        "download_detour": "proxy"
-      },
-      {
-        "tag": "geosite-openai",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/CHIZI-0618/v2ray-rules-dat/release/singbox_rule_set/geosite-openai.srs",
+        "url": "https://raw.githubusercontent.com/nekolsd/geoip/refs/heads/release/srs/cn.srs",
         "download_detour": "proxy"
       }
-    ]
+    ],
+    "default_domain_resolver": {
+      "server": "dns_cloudflare",
+      "rewrite_ttl": 60
+    },
+    "final": "proxy",
+    "find_process": true,
+    "auto_detect_interface": true
   },
   "experimental": {
     "clash_api": {
       "external_controller": "127.0.0.1:9999",
-      "external_ui_download_url": "",
-      "secret": "",
-      "default_mode": "",
-      "external_ui_download_detour": "",
+      "external_ui_download_url": "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip",
+      "secret": "xxxxxx",
+      "external_ui_download_detour": "proxy",
       "external_ui": "ui"
     },
     "cache_file": {
       "enabled": true,
-      "path": "cache.db",
-      "cache_id": "sing-box_cache",
-      "store_fakeip": true
+      "path": "cache-nekohasekai.db",
+      "cache_id": "singbox-nekohasekai",
+      "store_fakeip": true,
+      "store_rdrc": true
     }
   }
 }
